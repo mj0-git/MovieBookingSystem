@@ -38,36 +38,45 @@ public class AccountController {
     }
 
     // Read operation, all users
-    @GetMapping("/users")
-    public List<Account> fetchAccountList()
+    @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
+    public List<Account> fetchAccountList(@RequestHeader("Content-Type") String contentType)
     {
-        return accountService.fetchAccountList();
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(accountService.fetchAccountList());
     }
 
     // Read operation
-    @GetMapping("/users/{id}")
-    public Account fetchAccount(@PathVariable("id") Long accountId)
+    @GetMapping(value ="/users/{id}", produces = { "application/json", "application/xml" })
+    public Account fetchAccount(@PathVariable("id") Long accountId,
+        @RequestHeader("Content-Type") String contentType)
     {
-        return accountService.fetchAccount(accountId);
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(accountService.fetchAccount(accountId));
     }
 
     // Update operation
-    @PutMapping("/users/{id}")
+    @PutMapping(value = "/users/{id}", produces = { "application/json", "application/xml" })
     public Account
-    updateAccount(@RequestBody Account user,
+    updateAccount(@RequestBody Account user, @RequestHeader("Content-Type") String contentType,
                      @PathVariable("id") Long accountId)
     {
-        return accountService.updateAccount(
-                user, accountId);
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(accountService.updateAccount(
+                                user, accountId));
     }
 
     // Delete operation
-    @DeleteMapping("/users/{id}")
-    public String deleteAccounttById(@PathVariable("id")
+    @DeleteMapping(value = "/users/{id}", produces= {"text/plain"})
+    public ResponseEntity deleteAccounttById(@PathVariable("id")
                                        Long accountId)
     {
         accountService.deleteAccountById(
                 accountId);
-        return "Deleted Successfully";
+        return ResponseEntity.ok("Account "+ accountId.toString()+" Deleted ");
     }
+
+    //
 }
