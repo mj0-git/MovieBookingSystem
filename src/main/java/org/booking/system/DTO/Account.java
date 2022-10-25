@@ -25,6 +25,6 @@ public class Account {
     private String address;
     private String email;
     private String phoneNumber
-    private int[] favorites;
-    private int[] bookings;
+    private long[] favorites;
+    private long[] bookings;
 }

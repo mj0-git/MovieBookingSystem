@@ -5,6 +5,7 @@ import org.booking.system.Service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,7 +22,7 @@ public class AccountController {
 
     // Save operation
     @PostMapping("/users")
-    public Account saveAccount(
+    public ResponseEntity saveAccount(
             @Valid @RequestBody Account user)
     {
         Account userMade = accountService.saveAccount(user);
@@ -29,7 +30,7 @@ public class AccountController {
         URI location =ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(student.getId())
+                        .buildAndExpand(userMade.getId())
                         .toUri();
 
         return ResponseEntity.created(location).build();
@@ -39,7 +40,7 @@ public class AccountController {
 
     // Read operation, all users
     @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
-    public List<Account> fetchAccountList(@RequestHeader("Content-Type") String contentType)
+    public ResponseEntity fetchAccountList(@RequestHeader("Content-Type") String contentType)
     {
         return ResponseEntity.status(HttpStatus.OK)
                         .contentType(contentType)
@@ -47,8 +48,8 @@ public class AccountController {
     }
 
     // Read operation
-    @GetMapping(value ="/users/{id}", produces = { "application/json", "application/xml" })
-    public Account fetchAccount(@PathVariable("id") Long accountId,
+    @GetMapping(value ="/users/{accountId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity fetchAccount(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
         return ResponseEntity.status(HttpStatus.OK)
@@ -57,10 +58,9 @@ public class AccountController {
     }
 
     // Update operation
-    @PutMapping(value = "/users/{id}", produces = { "application/json", "application/xml" })
-    public Account
-    updateAccount(@RequestBody Account user, @RequestHeader("Content-Type") String contentType,
-                     @PathVariable("id") Long accountId)
+    @PutMapping(value = "/users/{accountId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity updateAccount(@RequestBody Account user, 
+        @RequestHeader("Content-Type") String contentType, @PathVariable("accountId") Long accountId)
     {
         return ResponseEntity.status(HttpStatus.OK)
                         .contentType(contentType)
@@ -69,8 +69,8 @@ public class AccountController {
     }
 
     // Delete operation
-    @DeleteMapping(value = "/users/{id}", produces= {"text/plain"})
-    public ResponseEntity deleteAccounttById(@PathVariable("id")
+    @DeleteMapping(value = "/users/{accountId}", produces= {"text/plain"})
+    public ResponseEntity deleteAccountById(@PathVariable("accountId")
                                        Long accountId)
     {
         accountService.deleteAccountById(
@@ -78,5 +78,72 @@ public class AccountController {
         return ResponseEntity.ok("Account "+ accountId.toString()+" Deleted ");
     }
 
-    //
+    //Add favorite
+    @PutMapping(value = "/users/{accountId}/favorites/{movieId}", 
+        produces = { "application/json", "application/xml" })
+    public ResponseEntity updateFavoritesById(@RequestHeader("Content-Type") String contentType,
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
+    {
+        Account userDB=accountService.fetchAccount(accountId);
+
+        long[] favorites = userMade.getFavorites();
+        long[] newFavs = Arrays.copyOf(favorites, favorites.length + 1);
+        newFavs[favorites.size()]=movieId;
+        userDB.setFavorites(newFavs);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(accountService.updateAccount(
+                                userDB, accountId));
+    }
+
+    //Drop favorite
+    @DeleteMapping(value = "/users/{accountId}/favorites/{movieId}", produces= {"text/plain"})
+    public ResponseEntity deleteFavoriteById(@RequestHeader("Content-Type") String contentType,
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
+    {
+        Account userDB=accountService.fetchAccount(accountId);
+
+        long[] favorites = userMade.getFavorites();
+        long[] newFavs = new long[favorites.length-1];
+        for(int i=0, j=0; i<favorites.length; i++){
+            if(favorites[i]!=movieId){
+                newFavs[j++]=favorites[i];
+            }
+        }
+        userDB.setFavorites(newFaves)
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(accountService.updateAccount(
+                                userDB, accountId));
+    }
+
+    //Get favorites
+    @GetMapping(value ="/users/{accountId}/favorites", produces = { "application/json", "application/xml" })
+    public ResponseEntity fetchFavorites(@PathVariable("accountId") Long accountId,
+        @RequestHeader("Content-Type") String contentType)
+    {
+        Account userDB=accountService.fetchAccount(accountId);
+
+        long[] favorites = userMade.getFavorites();
+
+        JSONPObject jsonObj = new JSONPObject("favorites",favorites);
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(jsonObj);
+    }
+    //Get Booking (Read-Only)
+    @GetMapping(value ="/users/{accountId}/bookings", produces = { "application/json", "application/xml" })
+    public ResponseEntity fetchBookings(@PathVariable("accountId") Long accountId,
+        @RequestHeader("Content-Type") String contentType)
+    {
+        Account userDB=accountService.fetchAccount(accountId);
+
+        long[] bookings = userMade.getBookings();
+
+        JSONPObject jsonObj = new JSONPObject("bookings",bookings);
+        return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(contentType)
+                        .body(jsonObj);
+    }
 }
