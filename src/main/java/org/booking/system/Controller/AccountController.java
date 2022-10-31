@@ -17,6 +17,8 @@ import java.util.List;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 public class AccountController {
@@ -33,15 +35,25 @@ public class AccountController {
     public ResponseEntity saveAccount(
             @Valid @RequestBody Account user)
     {
-        Account userMade = accountService.saveAccount(user);
 
-        URI location =ServletUriComponentsBuilder
+        //Data pattern validation
+        boolean emailGood=matchEmailPattern(user.getEmail());
+        boolean phoneGood=matchPhoneNumberPattern(user.getPhoneNumber());
+
+        if(emailGood && phoneGood) {
+            Account userMade = accountService.saveAccount(user);
+
+            URI location =ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
                         .buildAndExpand(userMade.getUserId())
                         .toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account Object contains invalid fields");
+        }        
     }
 
     // Read operation, all users
@@ -50,13 +62,7 @@ public class AccountController {
     {
         HttpHeaders headers = getHeaders(contentType);
         List<Account> userListDB = accountService.fetchAccountList();
-        // if(userListDB.isPresent()){
-        //     List<Account> userList = userListDB.get();
-            return new ResponseEntity<>(userListDB,headers, HttpStatus.OK);
-        // }
-        // else{
-        //     return new ResponseEntity<>(null, headers, HttpStatus.OK);
-        // }
+        return new ResponseEntity<>(userListDB,headers, HttpStatus.OK);
     }
 
     // Read operation
@@ -71,7 +77,7 @@ public class AccountController {
             return new ResponseEntity<>(user,headers, HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -80,8 +86,17 @@ public class AccountController {
     public ResponseEntity<Account> updateAccount(@RequestBody Account user, 
         @RequestHeader("Content-Type") String contentType, @PathVariable("accountId") Long accountId)
     {
+        //Data pattern validation
+        boolean emailGood=matchEmailPattern(user.getEmail());
+        boolean phoneGood=matchPhoneNumberPattern(user.getPhoneNumber());
         HttpHeaders headers = getHeaders(contentType);
-        return new ResponseEntity<>(accountService.updateAccount(user, accountId),headers, HttpStatus.OK);
+
+        if(emailGood && phoneGood) {
+            return new ResponseEntity<>(accountService.updateAccount(user, accountId),headers, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        } 
     }
 
     // Delete operation
@@ -97,8 +112,7 @@ public class AccountController {
     @PutMapping(value = "/users/{accountId}/favorites/{movieId}", 
         produces = { "application/json", "application/xml" })
     public ResponseEntity<Account> updateFavoritesById(@RequestHeader("Content-Type") String contentType,
-        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId,
-        @Valid @RequestBody Account userMade)
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
     {
 
         HttpHeaders headers = getHeaders(contentType);
@@ -106,7 +120,22 @@ public class AccountController {
 
         if(userDB.isPresent()){
             Account user = userDB.get();
-            long[] favorites = userMade.getFavorites();
+            long[] favorites = user.getFavorites();
+            if(favorites==null){
+                favorites=new long[0];
+            }
+            boolean found=false;
+            for(long fav:favorites){
+                if(movieId==fav){
+                    found=true;
+                }
+            }
+
+            if(found){
+                //No need to duplicate if list does contain, so return
+                System.out.println("Duplicate");
+                return new ResponseEntity<>(user,headers, HttpStatus.OK);
+            }
             long[] newFavs = Arrays.copyOf(favorites, favorites.length + 1);
             newFavs[favorites.length]=movieId;
             user.setFavorites(newFavs);
@@ -116,26 +145,52 @@ public class AccountController {
                 );
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
         }
     }
 
     //Drop favorite
     @DeleteMapping(value = "/users/{accountId}/favorites/{movieId}", produces= {"text/plain"})
     public ResponseEntity<Account> deleteFavoriteById(@RequestHeader("Content-Type") String contentType,
-        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId,
-        @Valid @RequestBody Account userMade)
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
-            long[] favorites = userMade.getFavorites();
-            long[] newFavs = new long[favorites.length-1];
-            for(int i=0, j=0; i<favorites.length; i++){
-                if(favorites[i]!=movieId){
-                    newFavs[j++]=favorites[i];
+            long[] favorites = user.getFavorites();
+            if(favorites==null){
+                //No need to delete if empty list 
+                System.out.println("Favorites null");
+                return new ResponseEntity<>(user,headers, HttpStatus.OK);
+            }
+
+            boolean not_found=true;
+            for(long fav:favorites){
+                if(movieId==fav){
+                    not_found=false;
                 }
+            }
+
+            if(not_found){
+                //No need to delete if list does not contain, so return
+                System.out.println("Does not contain");
+                return new ResponseEntity<>(user,headers, HttpStatus.OK);
+            }
+            long[] newFavs=null;
+            if(favorites.length<=1){
+                newFavs=new long[]{};
+                System.out.println("Favorites length<=1");
+            }
+            else{
+                //If non-zero, make copy. If zero, just add null
+                newFavs = new long[favorites.length-1];            
+                for(int i=0, j=0; i<favorites.length; i++){
+                    if(favorites[i]!=movieId){
+                        newFavs[j++]=favorites[i];
+                    }
+                }
+                System.out.println("Favorites length>1");
             }
             user.setFavorites(newFavs);
 
@@ -144,43 +199,48 @@ public class AccountController {
                 );
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
         }
     }
 
     //Get favorites
     @GetMapping(value ="/users/{accountId}/favorites", produces = { "application/json", "application/xml" })
-    public ResponseEntity fetchFavorites(@PathVariable("accountId") Long accountId,
-        @RequestHeader("Content-Type") String contentType, @Valid @RequestBody Account userMade)
+    public ResponseEntity<long[]> fetchFavorites(@PathVariable("accountId") Long accountId,
+        @RequestHeader("Content-Type") String contentType)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
-            long[] favorites = userMade.getFavorites();
-
-            JSONPObject jsonObj = new JSONPObject("favorites",favorites);
+            Account user = userDB.get();
+            long[] favorites = user.getFavorites();
+            if(favorites==null){
+                favorites=new long[0];
+            }
             return ResponseEntity.status(HttpStatus.OK)
                             .headers(headers)
-                            .body(jsonObj);
+                            .body(favorites);
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
         }
     }
     //Get Booking (Read-Only)
     @GetMapping(value ="/users/{accountId}/bookings", produces = { "application/json", "application/xml" })
-    public ResponseEntity fetchBookings(@PathVariable("accountId") Long accountId,
-        @RequestHeader("Content-Type") String contentType, @Valid @RequestBody Account userMade)
+    public ResponseEntity<long[]> fetchBookings(@PathVariable("accountId") Long accountId,
+        @RequestHeader("Content-Type") String contentType)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
-            long[] bookings = userMade.getBookings();
+            Account user = userDB.get();
+            long[] bookings = user.getBookings();
+            if(bookings==null){
+                bookings=new long[0];
+            }
 
-            JSONPObject jsonObj = new JSONPObject("bookings",bookings);
             return ResponseEntity.status(HttpStatus.OK)
                             .headers(headers)
-                            .body(jsonObj);
+                            .body(bookings);
         }
         else{
             return new ResponseEntity<>(null, headers, HttpStatus.OK);
@@ -199,5 +259,23 @@ public class AccountController {
             headers.setContentType(MediaType.TEXT_PLAIN);
         }
         return headers;
+    }
+    private boolean matchEmailPattern(String email){
+        if(email==null || email.trim().equals("")){
+            return true;
+        }
+        //check email is valid
+        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
+        Matcher mat = pattern.matcher(email);
+        return mat.matches();
+    }
+    private boolean matchPhoneNumberPattern(String phone){
+        if(phone==null || phone.trim().equals("")){
+            return true;
+        }
+        //check email is valid
+        Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
+        Matcher mat = pattern.matcher(phone);
+        return mat.matches();
     }
 }
