@@ -1,0 +1,456 @@
+---
+openapi: 3.0.0
+info:
+  title: account_api
+  description: documentation of the account api controller
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/605789.81.FA22/final_proj_account_api/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /users:
+    get:
+      description: obtain info about current user accounts
+      responses:
+        "200":
+          description: A list of current user accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No users found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      description: create new user account in DB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "201":
+          description: successfully created new account
+          headers:
+            Location:
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: uri
+                example: /users/6
+        "400":
+          description: One of Account fields missing or formatted incorrectly
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}:
+    get:
+      description: obtain info about user accounts
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      description: update info about selected user account
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "200":
+          description: Updated account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "400":
+          description: ID was not integer value or Account object has missing/invalid fields
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No account/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      description: delete info account object from DB
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Account object with matching id deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/favorites:
+    get:
+      description: obtain long array of movie IDs with matching account id
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account favorites to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Favorite Movie IDs of Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/favorites/{movieId}:
+    put:
+      description: update info about selected user account
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      - name: movieId
+        in: path
+        description: id of movie object to be added
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Updated favorites of account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No account/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      description: delete info account object from DB
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      - name: movieId
+        in: path
+        description: id of movie object to be removed
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Deleted movie from favorites of account object with matching id
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/bookings:
+    get:
+      description: obtain long array of showtime IDs with matching account id
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account bookings to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Booking Showtime IDs of Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Account:
+      required:
+      - userName
+      - address
+      - email
+      - phoneNumber
+      - favorites
+      - bookings
+      properties:
+        userId:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9223372036854775807
+          example: 20
+        userName:
+          type: string
+          example: xX_theBestUserName_Xx
+        address:
+          type: string
+          example: 123 Sesame Street, NY
+        email:
+          type: string
+          format: email
+          pattern: ^(.+)@(.+)$ 
+          example: an_amazing_email@yahoo.com
+        phoneNumber:
+          type: string
+          pattern: ^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$
+          example: (800) 123-4567
+        favorites:
+          type: array
+          items:
+            type: integer
+            format: int64
+        bookings:
+          type: array
+          items:
+            type: integer
+            format: int64
+      description: Model containing Account information for GET
+    account_body:
+      required:
+      - userName
+      - email
+      type: object
+      properties:
+        userName:
+          type: string
+          example: xX_theBestUserName_Xx
+        address:
+          type: string
+          example: 123 Sesame Street, NY
+        email:
+          type: string
+          format: email
+          pattern: ^(.+)@(.+)$ 
+          example: an_amazing_email@yahoo.com
+        phoneNumber:
+          type: string
+          pattern: ^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$
+          example: (800) 123-4567
+        favorites:
+          type: array
+          items:
+            type: integer
+            format: int64
+        bookings:
+          type: array
+          items:
+            type: integer
+            format: int64
+      description: Model containing Account info for PUT/POST
