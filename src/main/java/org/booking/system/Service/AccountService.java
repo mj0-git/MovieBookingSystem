@@ -3,6 +3,7 @@ package org.booking.system.Service;
 import org.booking.system.DTO.Account;
 
 import java.util.List;
+import java.util.Optional;
 
 // Interface
 public interface AccountService {
@@ -14,7 +15,7 @@ public interface AccountService {
     List<Account> fetchAccountList();
 
     //Read operation, single object
-    Account fetchAccount(Long id);
+    Optional<Account> fetchAccount(Long id);
 
     // Update operation
     Account updateAccount(Account account,

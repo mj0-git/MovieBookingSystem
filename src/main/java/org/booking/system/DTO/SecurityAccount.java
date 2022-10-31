@@ -12,24 +12,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="ACCOUNT")
+@Table(name="SECURITYACCOUNT")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
 // Class
-public class Account {
+public class SecurityAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     @Column(name="USERNAME", nullable=false)
     private String userName;
-    private String address;
-    @Column(name="EMAIL", nullable=false)
-    private String email;
-    private String phoneNumber;
-    private long[] favorites;
-    private long[] bookings;
+    @Column(name="PASSWORD", nullable=false)
+    private String password;
+    private String token;
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -29,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Read operation, return single
-    @Override public Account fetchAccount(Long id)
+    @Override public Optional<Account> fetchAccount(Long id)
     {
         return accountRepository.findById(id);
     }
