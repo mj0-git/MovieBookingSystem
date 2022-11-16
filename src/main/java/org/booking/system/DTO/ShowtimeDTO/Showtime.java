@@ -28,8 +28,8 @@ public class Showtime {
     @JsonProperty("plot")
     private String plot;
 
-    @JsonProperty("genre")
-    private String genre;
+    @JsonProperty("rated")
+    private String rated;
 
     @JsonProperty("runtime")
     private String runtime;
@@ -37,10 +37,6 @@ public class Showtime {
     @JsonProperty("time")
     @NotNull
     public String time;
-
-    @JsonProperty("bookingids")
-    @ElementCollection
-    public List<String> bookingIDs = new ArrayList<>();
 
     @JsonProperty("capacity")
     @NotNull
