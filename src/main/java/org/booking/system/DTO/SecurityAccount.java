@@ -28,5 +28,7 @@ public class SecurityAccount {
     private String userName;
     @Column(name="PASSWORD", nullable=false)
     private String password;
+    @Column(name="ROLE", nullable=false)
+    private String role;
     private String token;
 }

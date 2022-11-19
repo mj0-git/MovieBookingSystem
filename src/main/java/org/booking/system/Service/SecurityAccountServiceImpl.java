@@ -74,8 +74,10 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
             Optional<SecurityAccount> securityAccount= securityRepository.findByToken(uniqueUserString);
             if(securityAccount.isPresent()){
                 SecurityAccount securityAccountDB = securityAccount.get();
+                System.out.println(securityAccountDB.getRole());
                 User user= new User(securityAccountDB.getUserName(), securityAccountDB.getPassword(), true, true, true, true,
-                        AuthorityUtils.createAuthorityList("USER"));
+                        AuthorityUtils.createAuthorityList(securityAccountDB.getRole()));
+                System.out.println(user.getAuthorities());
                 return Optional.of(user);
             }
             return  Optional.empty();
