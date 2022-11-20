@@ -88,15 +88,4 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
         
     }
 
-    // @Override
-    // public SecurityAccount findById(Long id) {
-
-    //     System.out.println("********************    " + "in SecurityAccountServiceImpl, findByID " + "id= " + id);
-    //     Optional<SecurityAccount> securityAccount= securityRepository.findById(id);
-
-    //     System.out.println("%%%%%%%%%%%%%  " + "securityAccount  = " + securityAccount.toString());
-        
-    //     return securityAccount.orElse(null);
-    // }
-
 }

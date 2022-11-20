@@ -56,6 +56,35 @@ public class AccountServiceImpl implements AccountService {
                     account.getUserName());
         }
 
+        if (Objects.nonNull(account.getPassword())
+                && !"".equalsIgnoreCase(
+                account.getPassword())) {
+            userDB.setPassword(
+                    account.getPassword());
+        }
+
+        if (Objects.nonNull(account.getRole())
+                && !"".equalsIgnoreCase(
+                account.getRole())) {
+            userDB.setRole(
+                    account.getRole());
+        }
+        else{
+            userDB.setRole("ROLE_USER");
+        }
+        if (Objects.nonNull(account.getFirstName())
+                && !"".equalsIgnoreCase(
+                account.getFirstName())) {
+            userDB.setFirstName(
+                    account.getFirstName());
+        }
+        if (Objects.nonNull(account.getLastName())
+                && !"".equalsIgnoreCase(
+                account.getLastName())) {
+            userDB.setLastName(
+                    account.getLastName());
+        }
+
         if (Objects.nonNull(
                 account.getAddress())
                 && !"".equalsIgnoreCase(

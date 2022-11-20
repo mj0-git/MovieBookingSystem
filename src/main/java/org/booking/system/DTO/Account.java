@@ -33,6 +33,7 @@ public class Account {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name="PASSWORD", nullable=false)
     private String password;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name="ROLE", nullable=false)
     private String role;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
