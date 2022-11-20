@@ -9,6 +9,8 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.booking.system.Exception.NotFoundException;
+import org.booking.system.Exception.BadRequestException;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,13 +43,12 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
                 //Issue with creating JWT Token
                 //Errors before saving UUID to DB, so just return empty
                 System.out.println("--------------- ERROR in making JWT");
-                return StringUtils.EMPTY;
+                throw new BadRequestException("Issues with JWT creation");
             }catch(IllegalArgumentException e2){
                 //Issue with creating JWT Token
                 //Errors before saving UUID to DB, so just return empty
                 System.out.println("--------------- ERROR in making JWT");
-                return StringUtils.EMPTY;
-
+                throw new BadRequestException("Issues with JWT creation");
             }
 
                 //Save uuid Token in DB
@@ -59,9 +60,9 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
 
                 return jwtToken;
 
+        } else{
+            throw new NotFoundException("Username and password not found in Database");
         }
-
-        return StringUtils.EMPTY;
     }
 
     @Override
@@ -80,9 +81,9 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
                 System.out.println(user.getAuthorities());
                 return Optional.of(user);
             }
-            return  Optional.empty();
+             throw new NotFoundException("Username and password not found in Database");
         }catch(JWTVerificationException exc){
-            return Optional.empty();
+            throw new BadRequestException("Issue with JWT Verification");
         }
 
         

@@ -384,6 +384,10 @@ components:
     Account:
       required:
       - userName
+      - password
+      - role
+      - firstName
+      - lastName
       - address
       - email
       - phoneNumber
@@ -399,6 +403,21 @@ components:
         userName:
           type: string
           example: xX_theBestUserName_Xx
+        password:
+          type: string
+          example: password123!
+        role:
+          type: string
+          example: ROLE_USER
+        token:
+          type: string
+          example: 0aee9097-8cdf-462d-ad3c-c8d17743ad41 
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
         address:
           type: string
           example: 123 Sesame Street, NY
@@ -414,8 +433,7 @@ components:
         favorites:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
         bookings:
           type: array
           items:
@@ -425,12 +443,22 @@ components:
     account_body:
       required:
       - userName
+      - password
       - email
       type: object
       properties:
         userName:
           type: string
           example: xX_theBestUserName_Xx
+        password:
+          type: string
+          example: password123!
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
         address:
           type: string
           example: 123 Sesame Street, NY
@@ -446,8 +474,7 @@ components:
         favorites:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
         bookings:
           type: array
           items:

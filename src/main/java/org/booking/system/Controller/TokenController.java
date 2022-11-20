@@ -3,6 +3,7 @@ package org.booking.system.Controller;
 import org.booking.system.DTO.Account;
 import org.booking.system.Service.SecurityAccountService;
 import org.apache.commons.lang3.StringUtils;
+import org.booking.system.Exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class TokenController {
        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!      " + "=         " + token);
 
        if(StringUtils.isEmpty(token)){
-           return "no token found";
+            throw new BadRequestException("Issues with JWT creation");
        }
        return token;
     }

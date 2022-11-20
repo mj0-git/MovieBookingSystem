@@ -1,0 +1,84 @@
+---
+openapi: 3.0.0
+info:
+  title: token_api
+  description: documentation of the token api controller
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/605789.81.FA22/final_proj_account_api/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /token:
+    post:
+      description: Create token for user account in DB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "200":
+          description: successfully created and retrieved token
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkU3RyaW5nIjoiNWQ1OTZlNGQtMjU3NC00NjBkLTk2MzQtOTQ0YjVlNjc4OGZkIiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJpc3MiOiJsc2FudGljMSIsImlhdCI6MTY2ODk3NzU2N30.6VbFCylAWaBaUBEBV76iQE_ZWI-uCCTJpB7fJngvmY4
+        "404":
+          description: Username and password not found in Database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue with JST creation
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+   account_body:
+      required:
+      - userName
+      - password
+      type: object
+      properties:
+        userName:
+          type: string
+          example: xX_theBestUserName_Xx
+        password:
+          type: string
+          example: password123!
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        address:
+          type: string
+          example: 123 Sesame Street, NY
+        email:
+          type: string
+          format: email
+          pattern: ^(.+)@(.+)$ 
+          example: an_amazing_email@yahoo.com
+        phoneNumber:
+          type: string
+          pattern: ^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$
+          example: (800) 123-4567
+        favorites:
+          type: array
+          items:
+            type: string
+        bookings:
+          type: array
+          items:
+            type: integer
+            format: int64
+      description: Model containing Account info for POST
