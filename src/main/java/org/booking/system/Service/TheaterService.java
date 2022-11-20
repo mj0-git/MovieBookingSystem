@@ -16,7 +16,7 @@ public interface TheaterService {
     Booking updateBooking(Long id, Booking booking);
     void deleteBooking(Long id, Booking booking);
     List<Booking> getBookingByShowtimeId(Long id);
-    List<Booking> getBookingByUsername(String username);
+    List<Booking> getBookingByUserId(Long userId);
 
 }
 

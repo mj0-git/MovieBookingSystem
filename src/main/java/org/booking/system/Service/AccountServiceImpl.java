@@ -35,6 +35,11 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findById(id);
     }
 
+    @Override
+    public Optional<Account> fetchAccountByUsername(String username) {
+        return accountRepository.getAccountByUserName(username);
+    }
+
     // Update operation
     @Override
     public Account updateAccount(Account account,
@@ -76,11 +81,6 @@ public class AccountServiceImpl implements AccountService {
         if (Objects.nonNull(account.getFavorites())) {
             userDB.setFavorites(
                     account.getFavorites());
-        }
-
-        if (Objects.nonNull(account.getBookings())) {
-            userDB.setBookings(
-                    account.getBookings());
         }
 
 

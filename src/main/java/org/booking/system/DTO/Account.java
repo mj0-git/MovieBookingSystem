@@ -31,5 +31,4 @@ public class Account {
     private String email;
     private String phoneNumber;
     private long[] favorites;
-    private long[] bookings;
 }

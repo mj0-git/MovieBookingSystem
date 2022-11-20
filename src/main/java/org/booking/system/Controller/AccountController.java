@@ -1,7 +1,9 @@
 package org.booking.system.Controller;
 
 import org.booking.system.DTO.Account;
+import org.booking.system.DTO.ShowtimeDTO.Booking;
 import org.booking.system.Service.AccountService;
+import org.booking.system.Service.TheaterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import java.util.regex.Pattern;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private TheaterService theaterService;
 
     @GetMapping(value = "/users/test", produces= {"text/plain"})
     public ResponseEntity testAccount(){
@@ -226,17 +230,13 @@ public class AccountController {
     }
     //Get Booking (Read-Only)
     @GetMapping(value ="/users/{accountId}/bookings", produces = { "application/json", "application/xml" })
-    public ResponseEntity<long[]> fetchBookings(@PathVariable("accountId") Long accountId,
+    public ResponseEntity<List<Booking>> fetchBookings(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
-            Account user = userDB.get();
-            long[] bookings = user.getBookings();
-            if(bookings==null){
-                bookings=new long[0];
-            }
+            List<Booking> bookings = theaterService.getBookingByUserId(accountId);
 
             return ResponseEntity.status(HttpStatus.OK)
                             .headers(headers)

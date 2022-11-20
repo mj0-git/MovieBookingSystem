@@ -1,6 +1,7 @@
 package org.booking.system.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.booking.system.DTO.Account;
 import org.booking.system.DTO.MovieDTO.Movie;
 import org.booking.system.DTO.ShowtimeDTO.Booking;
 import org.booking.system.DTO.ShowtimeDTO.Showtime;
@@ -21,9 +22,11 @@ public class TheaterServiceImpl implements TheaterService {
 
     @Autowired
     private ShowtimeRepository showtimeRepository;
-
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private final String omdbUrl;
     @Autowired
@@ -93,19 +96,25 @@ public class TheaterServiceImpl implements TheaterService {
         Optional<Showtime> s =  showtimeRepository.findById(id);
         if(s.isPresent()){
             Showtime showtime = s.get();
-            String username = booking.getUsername();
-            int quantity = booking.getQuantity();
-            int capacity = showtime.getCapacity();
-            //Check if quantity < capacity is valid
-            if (capacity - quantity >= 0){
-                capacity = capacity - quantity;
-                showtime.setCapacity(capacity);
-                showtimeRepository.save(showtime);
-                booking.setShowtime(showtime);
-                bookingRepository.save(booking);
+            Long userId = booking.getUserId();
+            Optional<Account> account =  accountService.fetchAccount(userId);
+            if (!account.isPresent()){
+                throw new BadRequestException(String.format("Account not found with userId: %s", userId));
             }
-            else{
-                throw new BadRequestException(String.format("Quantity exceeds capacity, please change: %s", quantity));
+            else {
+                int quantity = booking.getQuantity();
+                int capacity = showtime.getCapacity();
+                //Check if quantity < capacity is valid
+                if (capacity - quantity >= 0) {
+                    capacity = capacity - quantity;
+                    showtime.setCapacity(capacity);
+                    showtimeRepository.save(showtime);
+                    booking.setShowtime(showtime);
+                    booking.setAccount(account.get());
+                    bookingRepository.save(booking);
+                } else {
+                    throw new BadRequestException(String.format("Quantity exceeds capacity, please change: %s", quantity));
+                }
             }
         }
         else{
@@ -116,8 +125,8 @@ public class TheaterServiceImpl implements TheaterService {
     @Override
     public Booking updateBooking(Long id, Booking booking) {
         //
-        String username = booking.getUsername();
-        Optional<Booking> b = bookingRepository.getBookingByUsernameAndShowtimeId(username, id);
+        Long userId = booking.getUserId();
+        Optional<Booking> b = bookingRepository.getBookingByUserIdAndShowtimeId(userId, id);
         Optional<Showtime> s =  showtimeRepository.findById(id);
         if(s.isPresent() && b.isPresent()){
             Showtime showtime = s.get();
@@ -137,15 +146,15 @@ public class TheaterServiceImpl implements TheaterService {
             }
         }
         else{
-            errorMessageBooking(id, username, b, s);
+            errorMessageBooking(id, userId, b, s);
             return null;
         }
     }
 
     @Override
     public void deleteBooking(Long id, Booking booking) {
-        String username = booking.getUsername();
-        Optional<Booking> b = bookingRepository.getBookingByUsernameAndShowtimeId(username, id);
+        Long userId = booking.getUserId();
+        Optional<Booking> b = bookingRepository.getBookingByUserIdAndShowtimeId(userId, id);
         Optional<Showtime> s =  showtimeRepository.findById(id);
         if(b.isPresent() && s.isPresent()){
             Showtime showtime = s.get();
@@ -156,16 +165,16 @@ public class TheaterServiceImpl implements TheaterService {
             bookingRepository.delete(b.get());
         }
         else{
-            errorMessageBooking(id, username, b, s);
+            errorMessageBooking(id, userId, b, s);
         }
     }
 
-    private void errorMessageBooking(Long id, String username, Optional<Booking> b, Optional<Showtime> s) {
+    private void errorMessageBooking(Long id, Long userId, Optional<Booking> b, Optional<Showtime> s) {
          if(!s.isPresent()){
             throw new NotFoundException(String.format("Invalid showtime id: %s", id));
         }
         else{
-            throw new NotFoundException(String.format("Booking not found with username: %s", username));
+            throw new NotFoundException(String.format("Booking not found with userId: %s", userId));
         }
     }
 
@@ -181,10 +190,10 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     @Override
-    public List<Booking> getBookingByUsername(String username) {
+    public List<Booking> getBookingByUserId(Long userId) {
         //Optional<Showtime> showtime =  FIND by account
         //if(showtime.isPresent()){
-            return bookingRepository.getBookingByUsername(username);
+            return bookingRepository.getBookingByUserId(userId);
         //}
         //else{
         //    throw new NotFoundException(String.format("Invalid id: %s", id));

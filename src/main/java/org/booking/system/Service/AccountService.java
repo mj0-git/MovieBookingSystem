@@ -16,6 +16,7 @@ public interface AccountService {
 
     //Read operation, single object
     Optional<Account> fetchAccount(Long id);
+    Optional<Account> fetchAccountByUsername (String username);
 
     // Update operation
     Account updateAccount(Account account,

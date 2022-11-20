@@ -92,7 +92,7 @@ public class TheaterController {
             method= RequestMethod.DELETE)
     public ResponseEntity deleteBooking(@PathVariable Long id,
                                         @RequestBody Booking booking){
-        if (booking.getUsername()==null || booking.getUsername().isEmpty()){
+        if (booking.userId()==null || booking.userId().isEmpty()){
             throw new BadRequestException("Missing username in request body");
         }
         theaterService.deleteBooking(id, booking);
