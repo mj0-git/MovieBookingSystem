@@ -1,6 +1,6 @@
 package org.booking.system.Controller;
 
-import org.booking.system.DTO.SecurityAccount;
+import org.booking.system.DTO.Account;
 import org.booking.system.Service.SecurityAccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ public class TokenController {
     private SecurityAccountService securityAccountService;
 
     @PostMapping("/token")
-    public String getToken(@RequestBody SecurityAccount secureUser){
+    public String getToken(@RequestBody Account secureUser){
 
         String userName=secureUser.getUserName();
         String password=secureUser.getPassword();

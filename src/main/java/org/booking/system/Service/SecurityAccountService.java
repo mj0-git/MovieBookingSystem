@@ -1,6 +1,6 @@
 package org.booking.system.Service;
 
-import org.booking.system.DTO.SecurityAccount;
+import org.booking.system.DTO.Account;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
@@ -12,5 +12,5 @@ public interface SecurityAccountService {
     //Security
     String login(String username, String password);
     Optional<User> findByToken(String token);
-    SecurityAccount findById(Long id);
+    // Account findById(Long id);
 }

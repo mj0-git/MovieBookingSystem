@@ -1,7 +1,7 @@
 package org.booking.system.Service;
 
-import org.booking.system.DTO.SecurityAccount;
-import org.booking.system.Repo.SecurityRepository;
+import org.booking.system.DTO.Account;
+import org.booking.system.Repo.AccountRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class SecurityAccountServiceImpl implements SecurityAccountService {
 
     @Autowired
-    SecurityRepository securityRepository;
+    AccountRepository securityRepository;
     @Autowired 
     private JWTUtil jwtUtil;
 
@@ -28,7 +28,7 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
  
         System.out.println ("in SecurityAccountServiceImpl - method login .... " + " username = " + username +  "   password =  " + password);
 
-        Optional<SecurityAccount> securityAccount = securityRepository.login(username,password);
+        Optional<Account> securityAccount = securityRepository.login(username,password);
 
         System.out.println("???????????????????????? securityAccount returned = " + securityAccount.toString());
         if(securityAccount.isPresent()){
@@ -51,7 +51,7 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
             }
 
                 //Save uuid Token in DB
-                SecurityAccount custom= securityAccount.get();
+                Account custom= securityAccount.get();
                 custom.setToken(tokenDB);
                 securityRepository.save(custom);
 
@@ -71,9 +71,9 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
         try{
             String uniqueUserString = jwtUtil.validateTokenAndRetrieveSubject(jwttoken);
 
-            Optional<SecurityAccount> securityAccount= securityRepository.findByToken(uniqueUserString);
+            Optional<Account> securityAccount= securityRepository.findByToken(uniqueUserString);
             if(securityAccount.isPresent()){
-                SecurityAccount securityAccountDB = securityAccount.get();
+                Account securityAccountDB = securityAccount.get();
                 System.out.println(securityAccountDB.getRole());
                 User user= new User(securityAccountDB.getUserName(), securityAccountDB.getPassword(), true, true, true, true,
                         AuthorityUtils.createAuthorityList(securityAccountDB.getRole()));
@@ -88,15 +88,15 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
         
     }
 
-    @Override
-    public SecurityAccount findById(Long id) {
+    // @Override
+    // public SecurityAccount findById(Long id) {
 
-        System.out.println("********************    " + "in SecurityAccountServiceImpl, findByID " + "id= " + id);
-        Optional<SecurityAccount> securityAccount= securityRepository.findById(id);
+    //     System.out.println("********************    " + "in SecurityAccountServiceImpl, findByID " + "id= " + id);
+    //     Optional<SecurityAccount> securityAccount= securityRepository.findById(id);
 
-        System.out.println("%%%%%%%%%%%%%  " + "securityAccount  = " + securityAccount.toString());
+    //     System.out.println("%%%%%%%%%%%%%  " + "securityAccount  = " + securityAccount.toString());
         
-        return securityAccount.orElse(null);
-    }
+    //     return securityAccount.orElse(null);
+    // }
 
 }

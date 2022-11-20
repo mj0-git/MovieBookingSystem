@@ -6,16 +6,20 @@ import org.booking.system.Service.AccountService;
 import org.booking.system.Service.TheaterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.booking.system.DTO.MovieDTO.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.http.ResponseEntity;
+import org.booking.system.Exception.BadRequestException;
+import org.booking.system.Exception.NotFoundException;
 
 import org.springframework.http.HttpHeaders;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.ArrayList;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
@@ -56,7 +60,7 @@ public class AccountController {
             return ResponseEntity.created(location).build();
         }
         else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account Object contains invalid fields");
+            throw new BadRequestException("Account Object contains invalid fields");
         }        
     }
 
@@ -79,9 +83,8 @@ public class AccountController {
         if(userDB.isPresent()){
             Account user = userDB.get();
             return new ResponseEntity<>(user,headers, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+        } else{
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
     }
 
@@ -95,12 +98,18 @@ public class AccountController {
         boolean phoneGood=matchPhoneNumberPattern(user.getPhoneNumber());
         HttpHeaders headers = getHeaders(contentType);
 
-        if(emailGood && phoneGood) {
-            return new ResponseEntity<>(accountService.updateAccount(user, accountId),headers, HttpStatus.OK);
+        Optional<Account> userDB=accountService.fetchAccount(accountId);
+
+        if(userDB.isPresent()){
+            if(emailGood && phoneGood) {
+                return new ResponseEntity<>(accountService.updateAccount(user, accountId),headers, HttpStatus.OK);
+            }
+            else {
+                throw new BadRequestException("Email or Phone contains invalid pattern");
+            } 
+        } else{
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
-        else {
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        } 
     }
 
     // Delete operation
@@ -108,31 +117,37 @@ public class AccountController {
     public ResponseEntity deleteAccountById(@PathVariable("accountId")
                                        Long accountId)
     {
-        accountService.deleteAccountById(accountId);
-        return ResponseEntity.ok("Account "+ accountId.toString()+" Deleted ");
+        Optional<Account> userDB=accountService.fetchAccount(accountId);
+
+        if(userDB.isPresent()){
+            accountService.deleteAccountById(accountId);
+            return ResponseEntity.ok("Account "+ accountId.toString()+" Deleted ");
+        } else{
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
+        }
     }
 
     //Add favorite
     @PutMapping(value = "/users/{accountId}/favorites/{movieId}", 
         produces = { "application/json", "application/xml" })
     public ResponseEntity<Account> updateFavoritesById(@RequestHeader("Content-Type") String contentType,
-        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") String movieId)
     {
 
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
 
+        //Movie movie = theaterService.getMovie(movieId, "");
+
         if(userDB.isPresent()){
             Account user = userDB.get();
-            long[] favorites = user.getFavorites();
-            if(favorites==null){
-                favorites=new long[0];
+            List<String> favorites = user.getFavorites();
+            if(favorites.size()<=0){
+                favorites=new ArrayList<String>();
             }
             boolean found=false;
-            for(long fav:favorites){
-                if(movieId==fav){
-                    found=true;
-                }
+            if(favorites.contains(movieId)){
+                found=true;
             }
 
             if(found){
@@ -140,8 +155,8 @@ public class AccountController {
                 System.out.println("Duplicate");
                 return new ResponseEntity<>(user,headers, HttpStatus.OK);
             }
-            long[] newFavs = Arrays.copyOf(favorites, favorites.length + 1);
-            newFavs[favorites.length]=movieId;
+            ArrayList<String> newFavs = new ArrayList<String>(favorites);
+            newFavs.add(movieId);
             user.setFavorites(newFavs);
 
             return new ResponseEntity<>(
@@ -149,83 +164,70 @@ public class AccountController {
                 );
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
     }
 
     //Drop favorite
     @DeleteMapping(value = "/users/{accountId}/favorites/{movieId}", produces= {"text/plain"})
     public ResponseEntity<Account> deleteFavoriteById(@RequestHeader("Content-Type") String contentType,
-        @PathVariable("accountId") Long accountId, @PathVariable("movieId") Long movieId)
+        @PathVariable("accountId") Long accountId, @PathVariable("movieId") String movieId)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
-            long[] favorites = user.getFavorites();
-            if(favorites==null){
+            ArrayList<String> favorites = new ArrayList<String>(user.getFavorites());
+            if(favorites.size()<=0){
                 //No need to delete if empty list 
                 System.out.println("Favorites null");
                 return new ResponseEntity<>(user,headers, HttpStatus.OK);
             }
 
-            boolean not_found=true;
-            for(long fav:favorites){
-                if(movieId==fav){
-                    not_found=false;
-                }
-            }
-
-            if(not_found){
-                //No need to delete if list does not contain, so return
+            if(!favorites.contains(movieId)){
                 System.out.println("Does not contain");
                 return new ResponseEntity<>(user,headers, HttpStatus.OK);
             }
-            long[] newFavs=null;
-            if(favorites.length<=1){
-                newFavs=new long[]{};
-                System.out.println("Favorites length<=1");
-            }
-            else{
-                //If non-zero, make copy. If zero, just add null
-                newFavs = new long[favorites.length-1];            
-                for(int i=0, j=0; i<favorites.length; i++){
-                    if(favorites[i]!=movieId){
-                        newFavs[j++]=favorites[i];
-                    }
+
+            int i=0;
+            for(String fav:favorites){
+                if(fav.equals(movieId)){
+                    break;
                 }
-                System.out.println("Favorites length>1");
+                i++;
             }
-            user.setFavorites(newFavs);
+
+            favorites.remove(i);
+            user.setFavorites(favorites);
 
             return new ResponseEntity<>(
                 accountService.updateAccount(user, accountId),headers, HttpStatus.OK
                 );
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
     }
 
     //Get favorites
     @GetMapping(value ="/users/{accountId}/favorites", produces = { "application/json", "application/xml" })
-    public ResponseEntity<long[]> fetchFavorites(@PathVariable("accountId") Long accountId,
+    public ResponseEntity<List<String>> fetchFavorites(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
         HttpHeaders headers = getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
-            long[] favorites = user.getFavorites();
-            if(favorites==null){
-                favorites=new long[0];
+            List<String> favorites = user.getFavorites();
+            if(favorites.size()<=0){
+                favorites=new ArrayList<String>();
             }
             return ResponseEntity.status(HttpStatus.OK)
                             .headers(headers)
                             .body(favorites);
         }
         else{
-            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
     }
     //Get Booking (Read-Only)
@@ -241,9 +243,8 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.OK)
                             .headers(headers)
                             .body(bookings);
-        }
-        else{
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
+        } else{
+            throw new NotFoundException(String.format("No user found in database with id=%s", accountId));
         }
     }
 
