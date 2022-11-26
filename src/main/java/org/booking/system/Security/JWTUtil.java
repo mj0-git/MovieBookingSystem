@@ -1,4 +1,4 @@
-package org.booking.system.Service;
+package org.booking.system.Security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

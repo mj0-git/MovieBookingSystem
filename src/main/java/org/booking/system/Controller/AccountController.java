@@ -33,42 +33,20 @@ public class AccountController {
     @Autowired
     private TheaterService theaterService;
 
+    @Autowired
+    private Validator validator;
+
     @GetMapping(value = "/users/test", produces= {"text/plain"})
     public ResponseEntity testAccount(){
         return ResponseEntity.ok("Testing getAccountService method annotated with @GET");
     }
 
-    // Save operation
-    @PostMapping("/users")
-    public ResponseEntity saveAccount(
-            @Valid @RequestBody Account user)
-    {
-
-        //Data pattern validation
-        boolean emailGood=matchEmailPattern(user.getEmail());
-        boolean phoneGood=matchPhoneNumberPattern(user.getPhoneNumber());
-
-        if(emailGood && phoneGood) {
-            Account userMade = accountService.saveAccount(user);
-
-            URI location =ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(userMade.getUserId())
-                        .toUri();
-
-            return ResponseEntity.created(location).build();
-        }
-        else {
-            throw new BadRequestException("Account Object contains invalid fields");
-        }        
-    }
 
     // Read operation, all users
     @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
-    public ResponseEntity<List<Account>> fetchAccountList(@RequestHeader("Content-Type") String contentType)
+    public ResponseEntity<List<Account>> fetchAccountList(@RequestHeader(value = "Content-Type", required = false) String contentType)
     {
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         List<Account> userListDB = accountService.fetchAccountList();
         return new ResponseEntity<>(userListDB,headers, HttpStatus.OK);
     }
@@ -78,7 +56,7 @@ public class AccountController {
     public ResponseEntity<Account> fetchAccount(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
@@ -90,13 +68,13 @@ public class AccountController {
 
     // Update operation
     @PutMapping(value = "/users/{accountId}", produces = { "application/json", "application/xml" })
-    public ResponseEntity<Account> updateAccount(@RequestBody Account user, 
+    public ResponseEntity<Account> updateAccount(@RequestBody Account user,
         @RequestHeader("Content-Type") String contentType, @PathVariable("accountId") Long accountId)
     {
         //Data pattern validation
-        boolean emailGood=matchEmailPattern(user.getEmail());
-        boolean phoneGood=matchPhoneNumberPattern(user.getPhoneNumber());
-        HttpHeaders headers = getHeaders(contentType);
+        boolean emailGood=validator.matchEmailPattern(user.getEmail());
+        boolean phoneGood=validator.matchPhoneNumberPattern(user.getPhoneNumber());
+        HttpHeaders headers = validator.getHeaders(contentType);
 
         Optional<Account> userDB=accountService.fetchAccount(accountId);
 
@@ -134,7 +112,7 @@ public class AccountController {
         @PathVariable("accountId") Long accountId, @PathVariable("movieId") String movieId)
     {
 
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
 
         //Movie movie = theaterService.getMovie(movieId, "");
@@ -173,7 +151,7 @@ public class AccountController {
     public ResponseEntity<Account> deleteFavoriteById(@RequestHeader("Content-Type") String contentType,
         @PathVariable("accountId") Long accountId, @PathVariable("movieId") String movieId)
     {
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
@@ -214,7 +192,7 @@ public class AccountController {
     public ResponseEntity<List<String>> fetchFavorites(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             Account user = userDB.get();
@@ -235,7 +213,7 @@ public class AccountController {
     public ResponseEntity<List<Booking>> fetchBookings(@PathVariable("accountId") Long accountId,
         @RequestHeader("Content-Type") String contentType)
     {
-        HttpHeaders headers = getHeaders(contentType);
+        HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
         if(userDB.isPresent()){
             List<Booking> bookings = theaterService.getBookingByUserId(accountId);
@@ -248,35 +226,4 @@ public class AccountController {
         }
     }
 
-    private HttpHeaders getHeaders(String contentType){
-        HttpHeaders headers = new HttpHeaders();
-        if(contentType.equals("application/json")){
-            headers.setContentType(MediaType.APPLICATION_JSON);
-        }
-        else if(contentType.equals("application/xml")){
-            headers.setContentType(MediaType.APPLICATION_XML);
-        }
-        else {
-            headers.setContentType(MediaType.TEXT_PLAIN);
-        }
-        return headers;
-    }
-    private boolean matchEmailPattern(String email){
-        if(email==null || email.trim().equals("")){
-            return true;
-        }
-        //check email is valid
-        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
-        Matcher mat = pattern.matcher(email);
-        return mat.matches();
-    }
-    private boolean matchPhoneNumberPattern(String phone){
-        if(phone==null || phone.trim().equals("")){
-            return true;
-        }
-        //check email is valid
-        Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
-        Matcher mat = pattern.matcher(phone);
-        return mat.matches();
-    }
 }

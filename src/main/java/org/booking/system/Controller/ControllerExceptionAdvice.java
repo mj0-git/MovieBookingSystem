@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = TheaterController.class)
+@RestControllerAdvice(basePackageClasses = {TheaterController.class, AccountController.class, TokenController.class})
 @Slf4j
-public class TheaterMovieControllerExceptionAdvice {
+public class ControllerExceptionAdvice {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleException(NotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);

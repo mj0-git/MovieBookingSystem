@@ -19,6 +19,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account saveAccount(Account account)
     {
+        account.setRole("ROLE_USER");
         return accountRepository.save(account);
     }
 

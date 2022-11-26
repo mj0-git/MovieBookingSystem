@@ -2,6 +2,7 @@ package org.booking.system.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +22,6 @@ import org.springframework.security.web.util.matcher.*;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/users/**"), new AntPathRequestMatcher("/theater/**")
     );
@@ -40,7 +40,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/token/**");
+        webSecurity.ignoring()
+                .antMatchers("/token/**")
+                .antMatchers("/register/**");
     }
 
     @Override
@@ -57,6 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // .antMatchers("/users/**").authenticated()
                 // .antMatchers("/theater/movie/**").authenticated()
                 // .antMatchers("/theater/showtimes/**").authenticated()
+                //.requestMatchers(PROTECTED_URLS)
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
                 .and()

@@ -2,7 +2,7 @@ package org.booking.system.Service;
 
 import org.booking.system.DTO.Account;
 import org.booking.system.Repo.AccountRepository;
-import org.apache.commons.lang3.StringUtils;
+import org.booking.system.Security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.booking.system.Exception.NotFoundException;
 import org.booking.system.Exception.BadRequestException;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,9 +79,11 @@ public class SecurityAccountServiceImpl implements SecurityAccountService {
                 System.out.println(user.getAuthorities());
                 return Optional.of(user);
             }
-             throw new NotFoundException("Username and password not found in Database");
+            else{
+                return Optional.empty();
+            }
         }catch(JWTVerificationException exc){
-            throw new BadRequestException("Issue with JWT Verification");
+            return Optional.empty();
         }
 
         

@@ -6,6 +6,7 @@ import org.booking.system.DTO.ShowtimeDTO.Showtime;
 import org.booking.system.Exception.BadRequestException;
 import org.booking.system.Service.TheaterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,19 @@ public class TheaterController {
     @Autowired
     private TheaterService theaterService;
 
+    @Autowired
+    private Validator validator;
+
     @RequestMapping(path= "/theater/movie",
             method= RequestMethod.GET,
-            produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Movie> getMovieByID(@RequestParam(value = "id", required = false) String id,
+            produces = { "application/json", "application/xml" })
+    public ResponseEntity<Movie> getMovieByID(@RequestHeader(value = "Content-Type", required = false) String contentType,
+                                              @RequestParam(value = "id", required = false) String id,
                                               @RequestParam(value = "title", required = false) String title)
     {
+        HttpHeaders headers = validator.getHeaders(contentType);
         Movie movie = theaterService.getMovie(id, title);
-        ResponseEntity<Movie> response = ResponseEntity.ok(movie);
-        return response;
+        return new ResponseEntity<>(movie,headers, HttpStatus.OK);
     }
 
     @RequestMapping(path= "/theater/admin/showtimes",
@@ -44,33 +49,36 @@ public class TheaterController {
         ResponseEntity<Showtime> response = ResponseEntity.ok().build();
         return response;
     }
-    @RequestMapping(path= "/theater/admin/showtimes/{id}/booking",
-            method= RequestMethod.GET)
-    public ResponseEntity<List<Booking>> getBookings(@PathVariable Long id){
+    @RequestMapping(path= "/theater/admin/showtimes/{id}/bookings",
+            method= RequestMethod.GET,
+            produces = { "application/json", "application/xml" })
+    public ResponseEntity<List<Booking>> getBookings(@RequestHeader(value = "Content-Type", required = false) String contentType,
+                                                     @PathVariable Long id){
+        HttpHeaders headers = validator.getHeaders(contentType);
         List<Booking> bookings = theaterService.getBookingByShowtimeId(id);
-        ResponseEntity<List<Booking>> response = ResponseEntity.ok(bookings);
-        return response;
+        return new ResponseEntity<>(bookings,headers, HttpStatus.OK);
     }
 
     @RequestMapping(path= "/theater/showtimes",
             method= RequestMethod.GET,
-            produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<Showtime>> getAllShowtime(){
+            produces = { "application/json", "application/xml" })
+    public ResponseEntity<List<Showtime>> getAllShowtime(@RequestHeader(value = "Content-Type", required = false) String contentType){
+        HttpHeaders headers = validator.getHeaders(contentType);
         List<Showtime> showtimes = theaterService.getAllShowtimes();
-        ResponseEntity<List<Showtime>> response = ResponseEntity.ok(showtimes);
-        return response;
+        return new ResponseEntity<>(showtimes,headers, HttpStatus.OK);
     }
 
     @RequestMapping(path= "/theater/showtimes/{id}",
             method= RequestMethod.GET,
-            produces={MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Showtime> getShowtime(@PathVariable Long id){
+            produces = { "application/json", "application/xml" })
+    public ResponseEntity<Showtime> getShowtime(@RequestHeader(value = "Content-Type", required = false) String contentType,
+                                                @PathVariable Long id){
+        HttpHeaders headers = validator.getHeaders(contentType);
         Showtime showtime = theaterService.getShowtime(id);
-        ResponseEntity<Showtime> response = ResponseEntity.ok(showtime);
-        return response;
+        return new ResponseEntity<>(showtime,headers, HttpStatus.OK);
     }
 
-    @RequestMapping(path= "/theater/showtimes/{id}/booking",
+    @RequestMapping(path= "/theater/showtimes/{id}/bookings",
             method= RequestMethod.POST)
     public ResponseEntity addBooking(@PathVariable Long id,
                                      @Valid @RequestBody Booking booking){
@@ -79,21 +87,23 @@ public class TheaterController {
         return response;
     }
 
-    @RequestMapping(path= "/theater/showtimes/{id}/booking",
-            method= RequestMethod.PUT)
-    public ResponseEntity<Booking> updateBooking(@PathVariable Long id,
-                                     @Valid @RequestBody Booking booking){
+    @RequestMapping(path= "/theater/showtimes/{id}/bookings",
+            method= RequestMethod.PUT,
+            produces = { "application/json", "application/xml" })
+    public ResponseEntity<Booking> updateBooking(@RequestHeader(value = "Content-Type", required = false) String contentType,
+                                                 @PathVariable Long id,
+                                                 @Valid @RequestBody Booking booking){
+        HttpHeaders headers = validator.getHeaders(contentType);
         Booking update = theaterService.updateBooking(id, booking);
-        ResponseEntity<Booking> response = ResponseEntity.ok(update);
-        return response;
+        return new ResponseEntity<>(update,headers, HttpStatus.OK);
     }
 
-    @RequestMapping(path= "/theater/showtimes/{id}/booking",
+    @RequestMapping(path= "/theater/showtimes/{id}/bookings",
             method= RequestMethod.DELETE)
     public ResponseEntity deleteBooking(@PathVariable Long id,
                                         @RequestBody Booking booking){
         if (booking.userId()==null || booking.userId().isEmpty()){
-            throw new BadRequestException("Missing username in request body");
+            throw new BadRequestException("Missing userId in request body");
         }
         theaterService.deleteBooking(id, booking);
         ResponseEntity<Showtime> response = ResponseEntity.status(HttpStatus.OK).build();
