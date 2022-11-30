@@ -16,4 +16,5 @@ public interface AccountRepository extends CrudRepository<Account, Long> {
     Optional<Account> findByToken(String token);
 
     Optional<Account> getAccountByUserName(String username);
+    Optional<Account> getAccountByEmail(String email);
 }

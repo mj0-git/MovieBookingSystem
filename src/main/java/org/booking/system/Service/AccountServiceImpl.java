@@ -4,6 +4,7 @@ import org.booking.system.DTO.Account;
 import org.booking.system.Repo.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.booking.system.Exception.BadRequestException;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,35 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account saveAccount(Account account)
     {
+        try{
+            String name = account.getUserName();
+            if(name==null | name.equals("")){
+                throw new BadRequestException("Registration requires userName");
+            }
+            
+            String pass = account.getPassword();
+            if(pass==null | pass.equals("")){
+                throw new BadRequestException("Registration requires password");
+            }
+
+            String email = account.getEmail();
+            if(email==null | email.equals("")){
+                throw new BadRequestException("Registration requires email");
+            }
+
+            Optional<Account> userDB = accountRepository.getAccountByUserName(name);
+            if(userDB.isPresent()){
+                throw new BadRequestException("Account with that username already exists");
+            }
+            userDB = accountRepository.getAccountByEmail(email);
+            if(userDB.isPresent()){
+                throw new BadRequestException("Account with that email already exists");
+            }
+
+        } catch(NullPointerException e){
+            throw new BadRequestException("Missing information. Registration requires userName, email and password.");
+        }
+
         account.setRole("ROLE_USER");
         return accountRepository.save(account);
     }
