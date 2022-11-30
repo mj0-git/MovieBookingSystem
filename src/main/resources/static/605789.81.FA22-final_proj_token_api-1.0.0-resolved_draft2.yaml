@@ -28,18 +28,19 @@ paths:
               schema:
                 type: string
                 example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkU3RyaW5nIjoiNWQ1OTZlNGQtMjU3NC00NjBkLTk2MzQtOTQ0YjVlNjc4OGZkIiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJpc3MiOiJsc2FudGljMSIsImlhdCI6MTY2ODk3NzU2N30.6VbFCylAWaBaUBEBV76iQE_ZWI-uCCTJpB7fJngvmY4
+        "400":
+          description: Issue with JST creation
+          content:
+            text/plain:
+              schema:
+                type: string
         "404":
           description: Username and password not found in Database
           content:
             text/plain:
               schema:
                 type: string
-        "500":
-          description: Issue with JST creation
-          content:
-            text/plain:
-              schema:
-                type: string
+
 components:
   schemas:
    account_body:
