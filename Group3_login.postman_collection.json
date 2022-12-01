@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "8b3b5faa-f80b-4cf5-819c-5f44210b725a",
+		"name": "Group3_login",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is text/plain\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"user_access\",pm.response.text())\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"lsantic1\",\r\n    \"password\":\"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is text/plain\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"admin_access\",pm.response.text())\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"admin\",\r\n    \"password\":\"p@ssw0rd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register_new_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Location');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    pm.response.to.be.header(\r",
+							"        \"Location\", \"/users/3\"\r",
+							"    );    \r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"user_path\",pm.response.headers.get('Location'))\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"lsantic\",\r\n    \"email\":\"lsantic@jh.edu\",\r\n    \"password\":\"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -19,34 +19,36 @@ public class AccountServiceImpl implements AccountService {
     // Save operation
     @Override
     public Account saveAccount(Account account)
-    {
-        try{
-            String name = account.getUserName();
-            if(name==null | name.equals("")){
-                throw new BadRequestException("Registration requires userName");
-            }
-            
-            String pass = account.getPassword();
-            if(pass==null | pass.equals("")){
-                throw new BadRequestException("Registration requires password");
-            }
+{
+        String name = account.getUserName();
+        if(name==null){
+            throw new BadRequestException("Registration requires userName");                
+        } else if(name.equals("")){
+            throw new BadRequestException("Registration requires userName");
+        }
+        
+        String pass = account.getPassword();
+        if(pass==null){
+            throw new BadRequestException("Registration requires password");
+        } else if(pass.equals("")){
+            throw new BadRequestException("Registration requires password");
+        }
 
-            String email = account.getEmail();
-            if(email==null | email.equals("")){
-                throw new BadRequestException("Registration requires email");
-            }
+        String email = account.getEmail();
+        if(email==null){
+            throw new BadRequestException("Registration requires email");
 
-            Optional<Account> userDB = accountRepository.getAccountByUserName(name);
-            if(userDB.isPresent()){
-                throw new BadRequestException("Account with that username already exists");
-            }
-            userDB = accountRepository.getAccountByEmail(email);
-            if(userDB.isPresent()){
-                throw new BadRequestException("Account with that email already exists");
-            }
+        } else if(email.equals("")){
+            throw new BadRequestException("Registration requires email");
+        }
 
-        } catch(NullPointerException e){
-            throw new BadRequestException("Missing information. Registration requires userName, email and password.");
+        Optional<Account> userDB = accountRepository.getAccountByUserName(name);
+        if(userDB.isPresent()){
+            throw new BadRequestException("Account with that username already exists");
+        }
+        userDB = accountRepository.getAccountByEmail(email);
+        if(userDB.isPresent()){
+            throw new BadRequestException("Account with that email already exists");
         }
 
         account.setRole("ROLE_USER");
@@ -76,6 +78,43 @@ public class AccountServiceImpl implements AccountService {
     public Account updateAccount(Account account,
                      Long accountId)
     {
+        String name = account.getUserName();
+        if(name==null){
+            //continue as it can be recovered from database
+        } else if(name.equals("")){
+            throw new BadRequestException("Account requires userName");
+        }
+        
+        String pass = account.getPassword();
+        if(pass==null){
+            //continue as it can be recovered from database
+        } else if(pass.equals("")){
+            throw new BadRequestException("Account requires password");
+        }
+
+        String email = account.getEmail();
+        if(email==null){
+            //continue as it can be recovered from database
+        }else if (email.equals("")){
+            throw new BadRequestException("Account requires email");
+        }
+
+        Optional<Account> userDB_dup = accountRepository.getAccountByUserName(name);
+        if(userDB_dup.isPresent()){
+            Account userDB_dup_real = userDB_dup.get();
+            if(userDB_dup_real.getUserId()!=accountId){
+                throw new BadRequestException("Account with that username already exists");
+            }
+        }
+        userDB_dup = accountRepository.getAccountByEmail(email);
+        if(userDB_dup.isPresent()){
+            Account userDB_dup_real = userDB_dup.get();
+            if(userDB_dup_real.getUserId()!=accountId){
+                throw new BadRequestException("Account with that email already exists");
+            }
+        }
+
+        //If no conflicts, update
         Account userDB
                 = accountRepository.findById(accountId)
                 .get();

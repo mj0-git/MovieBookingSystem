@@ -36,12 +36,6 @@ public class AccountController {
     @Autowired
     private Validator validator;
 
-    @GetMapping(value = "/users/test", produces= {"text/plain"})
-    public ResponseEntity testAccount(){
-        return ResponseEntity.ok("Testing getAccountService method annotated with @GET");
-    }
-
-
     // Read operation, all users
     @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
     public ResponseEntity<List<Account>> fetchAccountList(@RequestHeader(value = "Content-Type", required = false) String contentType)

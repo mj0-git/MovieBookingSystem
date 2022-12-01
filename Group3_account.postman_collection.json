@@ -1,0 +1,921 @@
+{
+	"info": {
+		"_postman_id": "7ed9f631-b1ab-448c-b7fb-495f6e962422",
+		"name": "Group3_account",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "all_users_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(jsonData).to.be.an(\"array\");});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all_users_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"const xmlData=xml2Json(pm.response.text());\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(xmlData.List.item).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_after_registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test id of the response\", ()=>{\r",
+							"pm.expect(jsonData.id).to.eql(1);});\r",
+							"pm.test(\"Test userName of the response\", ()=>{\r",
+							"pm.expect(jsonData.userName).to.eql('lsantic1');});\r",
+							"pm.test(\"Test Email of the response\", ()=>{\r",
+							"pm.expect(jsonData.email).to.eql('lsantic1@jh.edu');});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}",
+					"host": [
+						"{{url}}{{user_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_put_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test userName of the response\", ()=>{\r",
+							"pm.expect(jsonData.userName).to.eql('lsantic');});\r",
+							"pm.test(\"Test Email of the response\", ()=>{\r",
+							"pm.expect(jsonData.email).to.eql('lsantic@jh.edu');});\r",
+							"pm.test(\"Test First name of the response\", ()=>{\r",
+							"pm.expect(jsonData.firstName).to.eql('Lauren');});\r",
+							"pm.test(\"Test last name of the response\", ()=>{\r",
+							"pm.expect(jsonData.lastName).to.eql('Santichen');});\r",
+							"pm.test(\"Test address of the response\", ()=>{\r",
+							"pm.expect(jsonData.address).to.eql('123 Sesame Str. NY');});\r",
+							"pm.test(\"Test phone number of the response\", ()=>{\r",
+							"pm.expect(jsonData.phoneNumber).to.eql('(123) 456-7890');});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"lsantic\",\r\n    \"email\":\"lsantic@jh.edu\",\r\n    \"firstName\":\"Lauren\",\r\n    \"lastName\":\"Santichen\",\r\n    \"address\":\"123 Sesame Str. NY\",\r\n    \"phoneNumber\":\"(123) 456-7890\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}",
+					"host": [
+						"{{url}}{{user_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_put_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"const xmlData=xml2Json(pm.response.text());\r",
+							"pm.test(\"Test Username of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.userName).to.eql('lsantic');});\r",
+							"pm.test(\"Test Email of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.email).to.eql('lsantic@jh.edu');});\r",
+							"pm.test(\"Test First Name of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.firstName).to.eql('Lauren');});\r",
+							"pm.test(\"Test Last Name of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.lastName).to.eql('Santichen');});\r",
+							"pm.test(\"Test address of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.address).to.eql('123 Sesame Str. NY');});\r",
+							"pm.test(\"Test phone number of the response\", ()=>{\r",
+							"pm.expect(xmlData.Account.phoneNumber).to.eql('(123) 456-7890');});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Account>\r\n    <userName>lsantic</userName>\r\n    <email>lsantic@jh.edu</email>\r\n    <firstName>Lauren</firstName>\r\n    <lastName>Santichen</lastName>\r\n    <address>123 Sesame Str. NY</address>\r\n    <phoneNumber>(123) 456-7890</phoneNumber>\r\n</Account>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}",
+					"host": [
+						"{{url}}{{user_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_bookings_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(jsonData).to.be.an(\"array\");});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/bookings",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_bookings_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"const xmlData=xml2Json(pm.response.text());\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(xmlData.List).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/bookings",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "favorites_put_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"lsantic\",\r\n    \"email\":\"lsantic@jh.edu\",\r\n    \"firstName\":\"Lauren\",\r\n    \"lastName\":\"Santichen\",\r\n    \"address\":\"123 Sesame Str. NY\",\r\n    \"phoneNumber\":\"(123) 456-7890\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites/1",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "favorite_put_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Account>\r\n    <userName>lsantic1</userName>\r\n    <email>lsantic1@jh.edu</email>\r\n    <firstName>Lauren</firstName>\r\n    <lastName>Santichen</lastName>\r\n    <address>123 Sesame Str. NY</address>\r\n    <phoneNumber>(123) 456-7890</phoneNumber>\r\n</Account>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites/2",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_favorites_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(jsonData).to.be.an(\"array\");});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_favorites_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"const xmlData=xml2Json(pm.response.text());\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(xmlData.List.item).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "favorites_del_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"lsantic\",\r\n    \"email\":\"lsantic@jh.edu\",\r\n    \"firstName\":\"Lauren\",\r\n    \"lastName\":\"Santichen\",\r\n    \"address\":\"123 Sesame Str. NY\",\r\n    \"phoneNumber\":\"(123) 456-7890\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites/1",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "favorite_del_xml",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/xml\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/xml');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Account>\r\n    <userName>lsantic1</userName>\r\n    <email>lsantic1@jh.edu</email>\r\n    <firstName>Lauren</firstName>\r\n    <lastName>Santichen</lastName>\r\n    <address>123 Sesame Str. NY</address>\r\n    <phoneNumber>(123) 456-7890</phoneNumber>\r\n</Account>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/favorites/2",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"favorites",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Account>\r\n    <userName>lsantic1</userName>\r\n    <email>lsantic1@jh.edu</email>\r\n    <firstName>Lauren</firstName>\r\n    <lastName>Santichen</lastName>\r\n    <address>123 Sesame Str. NY</address>\r\n    <phoneNumber>(123) 456-7890</phoneNumber>\r\n</Account>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}",
+					"host": [
+						"{{url}}{{user_path}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{user_access}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
