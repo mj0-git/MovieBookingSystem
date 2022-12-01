@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-public class TokenController {
+public class AuthController {
 
     @Autowired
     private SecurityAccountService securityAccountService;

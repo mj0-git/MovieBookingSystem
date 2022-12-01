@@ -4,15 +4,22 @@ import org.booking.system.DTO.MovieDTO.Movie;
 import org.booking.system.DTO.ShowtimeDTO.Booking;
 import org.booking.system.DTO.ShowtimeDTO.Showtime;
 import org.booking.system.Exception.BadRequestException;
+import org.booking.system.Exception.NotFoundException;
 import org.booking.system.Service.TheaterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,11 +44,27 @@ public class TheaterController {
 
     @RequestMapping(path= "/theater/admin/showtimes",
             method= RequestMethod.POST)
-    public ResponseEntity createShowtime(@Valid @RequestBody Showtime showtime){
-        theaterService.createShowtime(showtime);
-        ResponseEntity<Showtime> response = ResponseEntity.status(HttpStatus.CREATED).build();
-        return response;
+    public ResponseEntity createShowtime(@Valid @RequestBody Showtime showtime, Errors errors){
+        validator.validateBody(errors);
+        Showtime created = theaterService.createShowtime(showtime);
+        URI location = ServletUriComponentsBuilder.fromUriString("/showtimes")
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
+
+    @RequestMapping(path= "/theater/admin/showtimes/{id}",
+            method= RequestMethod.PUT)
+    public ResponseEntity updateShowtime(@RequestHeader(value = "Content-Type", required = false) String contentType,
+                                         @PathVariable Long id,
+                                         @Valid @RequestBody Showtime showtime, Errors errors){
+        validator.validateBody(errors);
+        HttpHeaders headers = validator.getHeaders(contentType);
+        Showtime update = theaterService.updateShowtime(id, showtime);
+        return new ResponseEntity<>(update,headers, HttpStatus.OK);
+    }
+
     @RequestMapping(path= "/theater/admin/showtimes/{id}",
             method= RequestMethod.DELETE)
     public ResponseEntity deleteShowtime(@PathVariable Long id){
@@ -81,9 +104,10 @@ public class TheaterController {
     @RequestMapping(path= "/theater/showtimes/{id}/bookings",
             method= RequestMethod.POST)
     public ResponseEntity addBooking(@PathVariable Long id,
-                                     @Valid @RequestBody Booking booking){
+                                     @Valid @RequestBody Booking booking, Errors errors){
+        validator.validateBody(errors);
         theaterService.addBooking(id, booking);
-        ResponseEntity<Showtime> response = ResponseEntity.status(HttpStatus.OK).build();
+        ResponseEntity<Showtime> response = ResponseEntity.status(HttpStatus.CREATED).build();
         return response;
     }
 
@@ -92,7 +116,8 @@ public class TheaterController {
             produces = { "application/json", "application/xml" })
     public ResponseEntity<Booking> updateBooking(@RequestHeader(value = "Content-Type", required = false) String contentType,
                                                  @PathVariable Long id,
-                                                 @Valid @RequestBody Booking booking){
+                                                 @Valid @RequestBody Booking booking, Errors errors){
+        validator.validateBody(errors);
         HttpHeaders headers = validator.getHeaders(contentType);
         Booking update = theaterService.updateBooking(id, booking);
         return new ResponseEntity<>(update,headers, HttpStatus.OK);

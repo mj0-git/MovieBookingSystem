@@ -26,6 +26,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotNull
     public Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

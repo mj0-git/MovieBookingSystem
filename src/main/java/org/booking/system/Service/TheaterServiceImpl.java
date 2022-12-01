@@ -64,7 +64,7 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     @Override
-    public void createShowtime(Showtime showtime) {
+    public Showtime createShowtime(Showtime showtime) {
         String imdbID = showtime.getImdbid();
         Movie movie = getMovie(imdbID, "");
         if (movie != null){
@@ -72,10 +72,35 @@ public class TheaterServiceImpl implements TheaterService {
             showtime.setRated(movie.getRated());
             showtime.setPlot(movie.getPlot());
             showtime.setRuntime(movie.getRuntime());
-            showtimeRepository.save(showtime);
+            return showtimeRepository.save(showtime);
         }
         else {
             throw new BadRequestException("Invalid showtime object properties");
+        }
+    }
+
+    @Override
+    public Showtime updateShowtime(Long id, Showtime showtime) {
+        Optional<Showtime> update = showtimeRepository.findById(id);
+        if(update.isPresent()){
+            Showtime s = update.get();
+            String imdbID = showtime.getImdbid();
+            Movie movie = getMovie(imdbID, "");
+            if (movie != null){
+                s.setTitle(movie.getTitle());
+                s.setRated(movie.getRated());
+                s.setPlot(movie.getPlot());
+                s.setRuntime(movie.getRuntime());
+                s.setCapacity(showtime.getCapacity());
+                s.setTime(showtime.getTime());
+                return showtimeRepository.save(s);
+            }
+            else {
+                throw new BadRequestException("Invalid showtime object properties");
+            }
+        }
+        else{
+            throw new NotFoundException(String.format("Invalid showtime id: %s", id));
         }
     }
 
@@ -93,6 +118,10 @@ public class TheaterServiceImpl implements TheaterService {
 
     @Override
     public void addBooking(Long id, Booking booking) {
+        Optional<Booking> b = bookingRepository.getBookingByUserIdAndShowtimeId(booking.getUserId(), id);
+        if (b.isPresent()){
+            throw new BadRequestException(String.format("Booking already exists for userid: %s and showtime id: %s", booking.getUserId(), id));
+        }
         Optional<Showtime> s =  showtimeRepository.findById(id);
         if(s.isPresent()){
             Showtime showtime = s.get();

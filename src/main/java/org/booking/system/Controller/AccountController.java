@@ -32,7 +32,6 @@ public class AccountController {
     private AccountService accountService;
     @Autowired
     private TheaterService theaterService;
-
     @Autowired
     private Validator validator;
 

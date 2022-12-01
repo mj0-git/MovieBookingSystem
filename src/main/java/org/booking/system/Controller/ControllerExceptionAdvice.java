@@ -7,10 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice(basePackageClasses = {TheaterController.class, AccountController.class, TokenController.class})
+import javax.validation.ConstraintViolationException;
+
+@RestControllerAdvice(basePackageClasses = {TheaterController.class, AccountController.class, AuthController.class})
 @Slf4j
-public class ControllerExceptionAdvice {
+public class ControllerExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleException(NotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
@@ -19,5 +22,11 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleException(BadRequestException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public final ResponseEntity<Object> handleConstraintViolationExceptions(
+            ConstraintViolationException ex) {
+        String exceptionResponse = String.format("Invalid input parameters: %s\n", ex.getMessage());
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }
