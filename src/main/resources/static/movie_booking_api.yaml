@@ -1,0 +1,1019 @@
+---
+openapi: 3.0.0
+info:
+  title: Movie Booking API
+  description: documentation of the account api controller
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/605789.81.FA22/final_proj_account_api/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /users:
+    get:
+      tags:
+        - Account Controller
+      description: obtain info about current user accounts
+      responses:
+        "200":
+          description: A list of current user accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No users found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}:
+    get:
+      tags:
+        - Account Controller
+      description: obtain info about user accounts
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      tags:
+        - Account Controller
+      description: update info about selected user account
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "200":
+          description: Updated account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "400":
+          description: ID was not integer value or Account object has missing/invalid fields
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No account/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      tags:
+        - Account Controller
+      description: delete info account object from DB
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Account object with matching id deleted
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/favorites:
+    get:
+      tags:
+        - Account Controller
+      description: obtain long array of movie IDs with matching account id
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account favorites to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Favorite Movie IDs of Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/favorites/{movieId}:
+    put:
+      tags:
+        - Account Controller
+      description: update info about selected user account
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      - name: movieId
+        in: path
+        description: id of movie object to be added
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Updated favorites of account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        "404":
+          description: No account/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      tags:
+        - Account Controller
+      description: delete info account object from DB
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      - name: movieId
+        in: path
+        description: id of movie object to be removed
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Deleted movie from favorites of account object with matching id
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /users/{accountId}/bookings:
+    get:
+      tags:
+        - Account Controller
+      description: obtain long array of showtime IDs with matching account id
+      parameters:
+      - name: accountId
+        in: path
+        description: id of user account bookings to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Booking Showtime IDs of Account object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "404":
+          description: No accounts/id-matching accounts found in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /token:
+    post:
+      tags:
+        - Auth Controller
+      description: Create token for user account in DB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "200":
+          description: successfully created and retrieved token
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkU3RyaW5nIjoiNWQ1OTZlNGQtMjU3NC00NjBkLTk2MzQtOTQ0YjVlNjc4OGZkIiwic3ViIjoiQXV0aGVudGljYXRpb24iLCJpc3MiOiJsc2FudGljMSIsImlhdCI6MTY2ODk3NzU2N30.6VbFCylAWaBaUBEBV76iQE_ZWI-uCCTJpB7fJngvmY4
+        "400":
+          description: Issue with JST creation
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: Username and password not found in Database
+          content:
+            text/plain:
+              schema:
+                type: string
+  /register:                
+    post:
+      tags:
+        - Auth Controller
+      description: create new user account in DB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/account_body'
+        required: true
+      responses:
+        "201":
+          description: successfully created new account
+          headers:
+            Location:
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: uri
+                example: /users/6
+        "400":
+          description: One of Account fields missing or formatted incorrectly
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No accounts/id-matching account in database
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Issue reading accounts from DB (file) or converting to JSON/XML
+          content:
+            text/plain:
+              schema:
+                type: string
+  /theater/movie:
+    get:
+      tags:
+        - Theater Controller
+      description: obtain info about user accounts
+      parameters:
+      - name: imdbid
+        in: query
+        description: imdbd id of movie
+        schema:
+          type: string
+          example: tt0117571
+      - name: title
+        in: query
+        description: title of movie
+        schema:
+          type: string
+          example: Scream
+      responses:
+        "200":
+          description: Movie object with matching imdbid or title
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+        "404":
+          description: Movie not found with id, title
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Movie not found with id "rtt0117571", title "Screamm"
+  /theater/showtimes:
+    get:
+      tags:
+        - Theater Controller
+      description: obtain showtimes of movies playing 
+      responses:
+        "200":
+          description: A list of showtime objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Showtime'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Showtime'
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /theater/showtimes/{id}:
+    get:
+      tags:
+        - Theater Controller
+      description: obtain showtime of movie playing by id
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 1
+      responses:
+        "200":
+          description: Showtime object with matching id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Showtime'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Showtime'
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Showtime with id 1 not found 
+  /theater/showtimes/{id}/booking:
+    post:
+      tags:
+        - Theater Controller
+      description: Create booking to showtime with id
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/booking_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/booking_body'
+        required: true
+      responses:
+        "201":
+          description: successfully created booking
+        "400":
+          description: Invalid username or quantity
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      tags:
+        - Theater Controller
+      description: Update booking to showtime with id
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/booking_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/booking_body'
+        required: true
+      responses:
+        "200":
+          description: Updated booking
+        "400":
+          description: Invalid username or quantity
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      tags:
+        - Theater Controller
+      description: Update booking to showtime with id
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Deleted booking with username
+        "400":
+          description: Invalid username
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /theater/admin/showtimes:
+    post:
+      tags:
+        - Admin Theater Controller
+      description: Create showtime
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/showtime_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/showtime_body'
+        required: true
+      responses:
+        "201":
+          description: successfully created showtime
+        "400":
+          description: Missing required attributes
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: movie with imdbid not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /theater/admin/showtimes/{id}:
+    put:
+      tags:
+        - Admin Theater Controller
+      description: Update showtime
+      parameters:
+        - name: id
+          in: path
+          description: id of showtime to book
+          required: true
+          style: simple
+          explode: false
+          schema:
+            minimum: 0
+            type: integer
+            example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/showtime_body'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/showtime_body'
+        required: true
+      responses:
+        "201":
+          description: successfully created showtime
+        "400":
+          description: Missing required attributes
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: movie with imdbid not found
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      tags:
+        - Admin Theater Controller
+      description: Delete showtime with id
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Deleted showtime with id
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string             
+  /theater/admin/showtimes/{id}/bookings:
+    get:
+      tags:
+        - Admin Theater Controller
+      description: Get all bookings for showtime
+      parameters:
+      - name: id
+        in: path
+        description: id of showtime to book
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 0
+          type: integer
+          example: 5
+      responses:
+        "200":
+          description: Bookings with matching showtimeid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+        "404":
+          description: Showtime with id not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Showtime with id 1 not found                                                                                                    
+
+components:
+  schemas:
+    Account:
+      required:
+      - userName
+      - password
+      - role
+      - firstName
+      - lastName
+      - address
+      - email
+      - phoneNumber
+      - favorites
+      - bookings
+      properties:
+        userId:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9223372036854775807
+          example: 20
+        userName:
+          type: string
+          example: xX_theBestUserName_Xx
+        password:
+          type: string
+          example: password123!
+        role:
+          type: string
+          example: ROLE_USER
+        token:
+          type: string
+          example: 0aee9097-8cdf-462d-ad3c-c8d17743ad41 
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        address:
+          type: string
+          example: 123 Sesame Street, NY
+        email:
+          type: string
+          format: email
+          pattern: ^(.+)@(.+)$ 
+          example: an_amazing_email@yahoo.com
+        phoneNumber:
+          type: string
+          example: (800) 123-4567
+        favorites:
+          type: array
+          items:
+            type: string
+        bookings:
+          type: array
+          items:
+            type: integer
+            format: int64
+      description: Model containing Account information for GET
+    account_body:
+      required:
+      - userName
+      - password
+      - email
+      type: object
+      properties:
+        userName:
+          type: string
+          example: xX_theBestUserName_Xx
+        password:
+          type: string
+          example: password123!
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        address:
+          type: string
+          example: 123 Sesame Street, NY
+        email:
+          type: string
+          format: email
+          pattern: ^(.+)@(.+)$ 
+          example: an_amazing_email@yahoo.com
+        phoneNumber:
+          type: string
+          example: (800) 123-4567
+        favorites:
+          type: array
+          items:
+            type: string
+        bookings:
+          type: array
+          items:
+            type: integer
+            format: int64
+      description: Model containing Account info for PUT/POST
+    Movie:
+      properties:
+        title:
+          type: string
+          example: Scream
+        year:
+          type: string
+          example: 1996
+        rated:
+          type: string
+          example: R
+        released:
+          type: string
+          example: 20 Dec 1996
+        runtime:
+          type: string
+          example: 111 min
+        genre:
+          type: string
+          example: Horror
+        director:
+          type: string
+          example: Wes Craven                              
+        writer:
+          type: string
+          example: Kevin Williamson
+        actors:
+          type: string
+          example: Neve Campbell, Courteney Cox, David Arquette
+        plot:
+          type: string
+          example: A year after the murder of her mother, a teenage girl is terrorized by a new killer, who targets the girl and her friends by using horror films as part of a deadly game.
+        language:
+          type: string
+          example: English
+        country:
+          type: string
+          example: United States
+        awards:
+          type: string
+          example: 12 wins & 11 nominations
+        poster:
+          type: string
+          example: https://m.media-amazon.com/images/M/MV5BMjA2NjU5MTg5OF5BMl5BanBnXkFtZTgwOTkyMzQxMDE@._V1_SX300.jpg
+        metascore:
+          type: string
+          example: 65
+        imdbRating:
+          type: string
+          example: 7.4
+        imdbVotes:
+          type: string
+          example: 342,519
+        imdbID:
+          type: string
+          example: tt0117571
+        type:
+          type: string
+          example: movie
+        dvd:
+          type: string
+          example: 08 Dec 1998
+        boxOffice:
+          type: string
+          example: $103,046,663                            
+      description: Model containing Movie information for GET
+    Showtime:
+      properties:
+        title:
+          type: string
+          example: Scream
+        rated:
+          type: string
+          example: R
+        plot:
+          type: string
+          example: A year after the murder of her mother, a teenage girl is terrorized by a new killer, who targets the girl and her friends by using horror films as part of a deadly game.
+        runtime:
+          type: string
+          example: 111 min
+        time:
+          type: string
+          example: November 20, 2022 12pm
+        capacity:
+          type: string
+          example: 30
+        imdbID:
+          type: string
+          example: tt0117571                      
+      description: Model containing Showtime information
+    Booking:
+      properties:
+        booking-id:
+          type: integer
+          example: 3
+        userId:
+          type: integer
+          example: 5
+        quantity:
+          type: integer
+          example: 1
+        Showtime:
+          properties:
+            id:
+              type: integer
+              example: 1
+            title:
+              type: string
+              example: Scream
+            time:
+              type: string
+              example: November 20, 2022 12pm                  
+      description: Model containing Booking information
+    booking_body:
+      required:
+      - userId
+      - quantity
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 3
+        quantity:
+          type: number
+          example: 2
+      description: Model containing booking info for PUT/POST/DELETE
+    showtime_body:
+      required:
+      - imdbid
+      - time
+      - capacity
+      type: object
+      properties:
+        imdbid:
+          type: string
+          example: tt0117571
+        time:
+          type: string
+          example: November 20, 2022 12pm
+        capacity:
+          type: number
+          example: 30  
+      description: Model containing showtime info for POST       
+        
