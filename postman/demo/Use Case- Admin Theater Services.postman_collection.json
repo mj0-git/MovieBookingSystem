@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "740ad31e-73c8-4151-b16e-bb402968837d",
+		"name": "Use Case: Admin Theater Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22902243"
+	},
+	"item": [
+		{
+			"name": "login_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is text/plain\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"user_access\",pm.response.text())\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"mpatel96\",\r\n    \"password\":\"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_create_invalid_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", ()=> {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"imdb-id\":\"tt12003946\",\n    \"capacity\":30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/admin/showtimes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin",
+						"showtimes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is text/plain\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"admin_access\",pm.response.text())\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\":\"admin\",\r\n    \"password\":\"p@ssw0rd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_create_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Location');",
+							"});",
+							"",
+							"postman.setEnvironmentVariable(\"showtime_path\",pm.response.headers.get('Location'))",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"imdb-id\":\"tt12003946\",\n    \"time\":\"December 22, 2022 12pm\",\n    \"capacity\":30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/admin/showtimes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin",
+						"showtimes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater{{showtime_path}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater{{showtime_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_update_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Title of the response\", ()=>{",
+							"pm.expect(jsonData.title).to.eql('Violent Night');});",
+							"pm.test(\"Time of the response\", ()=>{",
+							"pm.expect(jsonData.time).to.eql('December 24, 2022 12pm');});",
+							"pm.test(\"Capacityof the response\", ()=>{",
+							"pm.expect(jsonData.capacity).to.eql(30);});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"imdb-id\":\"tt12003946\",\n    \"time\":\"December 24, 2022 12pm\",\n    \"capacity\":30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/admin{{showtime_path}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin{{showtime_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_delete_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/admin{{showtime_path}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin{{showtime_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all_showtimes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(jsonData).to.be.an(\"array\");});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{user_access}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

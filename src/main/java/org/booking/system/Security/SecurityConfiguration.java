@@ -24,7 +24,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/users/**"), new AntPathRequestMatcher("/theater/movies/**"),
-            new AntPathRequestMatcher("/theater/showtimes/**"), new AntPathRequestMatcher("/theater/showtimes")
+            new AntPathRequestMatcher("/theater/showtimes/**"), new AntPathRequestMatcher("/theater/showtimes"),
+            new AntPathRequestMatcher("/theater/admin/showtimes/**")
     );
 
     AuthenticationProvider provider;

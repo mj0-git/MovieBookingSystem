@@ -1,0 +1,573 @@
+{
+	"info": {
+		"_postman_id": "96fa66d6-07e1-4df2-8ab7-0035524a4857",
+		"name": "Query_Shows_and_Book",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "all_showtimes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(jsonData).to.be.an(\"array\");});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Showtime Id of the response\", ()=>{",
+							"pm.expect(jsonData.id).to.eql(1);});",
+							"pm.test(\"Showtime Title of the response\", ()=>{",
+							"pm.expect(jsonData.title).to.eql('Smile');});",
+							"",
+							"postman.setEnvironmentVariable(\"showtime_id\",jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\":\"3\",\n    \"quantity\":3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/{{showtime_id}}/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"{{showtime_id}}",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_bookings_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(jsonData).to.be.an(\"array\");});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/bookings",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"userId of the response\", ()=>{",
+							"pm.expect(jsonData.userId).to.eql(3);});",
+							"pm.test(\"quantity of the response\", ()=>{",
+							"pm.expect(jsonData.quantity).to.eql(5);});",
+							"pm.test(\"Showtime id of the response\", ()=>{",
+							"pm.expect(jsonData.showtime.id).to.eql(1);});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\":\"3\",\n    \"quantity\":5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/{{showtime_id}}/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"{{showtime_id}}",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Showtime Id of the response\", ()=>{",
+							"pm.expect(jsonData.id).to.eql(1);});",
+							"pm.test(\"Showtime Title of the response\", ()=>{",
+							"pm.expect(jsonData.title).to.eql('Smile');});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes/{{showtime_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"{{showtime_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\":\"3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/{{showtime_id}}/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"{{showtime_id}}",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_bookings_json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\",()=>{\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Test data type of the response\", ()=>{\r",
+							"pm.expect(jsonData).to.be.an(\"array\");});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}/bookings",
+					"host": [
+						"{{url}}{{user_path}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is application/json\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+							"});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)",
+							"});",
+							"",
+							"const jsonData=pm.response.json();",
+							"pm.test(\"Showtime Id of the response\", ()=>{",
+							"pm.expect(jsonData.id).to.eql(1);});",
+							"pm.test(\"Showtime Title of the response\", ()=>{",
+							"pm.expect(jsonData.title).to.eql('Smile');});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes/{{showtime_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"{{showtime_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_delete Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is present\",()=>{\r",
+							"    pm.response.to.have.header('Content-Type');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test Response time max limit\", ()=>{\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Account>\r\n    <userName>lsantic1</userName>\r\n    <email>lsantic1@jh.edu</email>\r\n    <firstName>Lauren</firstName>\r\n    <lastName>Santichen</lastName>\r\n    <address>123 Sesame Str. NY</address>\r\n    <phoneNumber>(123) 456-7890</phoneNumber>\r\n</Account>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}{{user_path}}",
+					"host": [
+						"{{url}}{{user_path}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{user_access}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -91,6 +91,12 @@ public class AccountController {
         Optional<Account> userDB=accountService.fetchAccount(accountId);
 
         if(userDB.isPresent()){
+            List<Booking> bookings = theaterService.getBookingByUserId(accountId);
+            if (!bookings.isEmpty()) {
+                for (Booking book : bookings) {
+                    theaterService.deleteBooking(book.getShowtime().getId(), book);
+                }
+            }
             accountService.deleteAccountById(accountId);
             return ResponseEntity.ok("Account "+ accountId.toString()+" Deleted ");
         } else{
@@ -108,7 +114,7 @@ public class AccountController {
         HttpHeaders headers = validator.getHeaders(contentType);
         Optional<Account> userDB=accountService.fetchAccount(accountId);
 
-        //Movie movie = theaterService.getMovie(movieId, "");
+        Movie movie = theaterService.getMovie(movieId, "");
 
         if(userDB.isPresent()){
             Account user = userDB.get();

@@ -1,0 +1,497 @@
+{
+	"info": {
+		"_postman_id": "23ae2ff3-aa4a-4d3a-b4f7-51374cce1502",
+		"name": "Group3_theater_bad_data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22902243"
+	},
+	"item": [
+		{
+			"name": "movie_with-invalid-title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is text/plain\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.eql('Movie not found with: id=null, title=asdfsadf');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/movie?title=asdfsadf",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"movie"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "asdfsadf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_with-invalid-title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is present\",()=>{",
+							"    pm.response.to.have.header('Content-Type');",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is text/plain\",()=>{",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('text/plain;charset=UTF-8');",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.eql('Movie not found with: id=ttaa, title=null');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/movie?id=ttaa",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"movie"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "ttaa"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_create_invalid_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", ()=> {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('time must not be null');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"imdb-id\":\"tt12003946\",\n    \"capacity\":30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/admin/showtimes",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin",
+						"showtimes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_update_invalid_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('Invalid showtime id: 66');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"imdb-id\":\"tt00\",\n    \"time\":\"December 24, 2022 12pm\",\n    \"capacity\":30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/admin/showtimes/66",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin",
+						"showtimes",
+						"66"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_delete_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('Invalid showtime id: 66');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_access}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/admin/showtimes/66",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"admin",
+						"showtimes",
+						"66"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_invalid_showtime",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('Invalid showtime id: 100');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/theater/showtimes/100",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_invalid_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", ()=> {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('userId must not be null');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n    \"quantity\":3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/1/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"1",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", ()=> {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('quantity must be greater than zero');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\":\"3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/1/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"1",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Test data type of the response\", ()=>{",
+							"pm.expect(pm.response.text()).to.include('Booking not found with userId: 400');});",
+							"",
+							"pm.test(\"Test Response time max limit\", ()=>{",
+							"    pm.expect(pm.response.responseTime).to.be.below(500)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\":\"400\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/theater/showtimes/1/bookings",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"theater",
+						"showtimes",
+						"1",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{user_access}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
