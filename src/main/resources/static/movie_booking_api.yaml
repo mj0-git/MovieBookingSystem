@@ -436,7 +436,7 @@ paths:
     get:
       tags:
         - Theater Controller
-      description: obtain info about user accounts
+      description: get movie information
       parameters:
       - name: imdbid
         in: query
@@ -615,7 +615,7 @@ paths:
     delete:
       tags:
         - Theater Controller
-      description: Update booking to showtime with id
+      description: Delete booking to showtime with id
       parameters:
       - name: id
         in: path
@@ -675,7 +675,7 @@ paths:
     put:
       tags:
         - Admin Theater Controller
-      description: Update showtime
+      description: Update showtime with id
       parameters:
         - name: id
           in: path
@@ -697,8 +697,8 @@ paths:
               $ref: '#/components/schemas/showtime_body'
         required: true
       responses:
-        "201":
-          description: successfully created showtime
+        "200":
+          description: Successfully Updated showtime
         "400":
           description: Missing required attributes
           content:
